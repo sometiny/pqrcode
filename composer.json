@@ -1,0 +1,24 @@
+{
+    "name": "jazor/qrcode",
+    "type": "library",
+    "description": "qrcode for php",
+    "keywords": ["qrcode","jazor"],
+    "homepage": "https://github.com/cook-code-jazor/qrcode",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "anlige",
+            "email": "zhanghuiguoanlige@126.com",
+            "homepage": "https://github.com/cook-code-jazor/qrcode"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jazor\\QRCode\\": "./src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
