@@ -1,5 +1,5 @@
 <?php
-namespace Jazor\QRCode;
+namespace Jazor\QRCode\Utils;
 
 class QRRawCode {
     public $version;
