@@ -3,13 +3,13 @@
     "type": "library",
     "description": "qrcode for php",
     "keywords": ["qrcode","jazor"],
-    "homepage": "https://github.com/cook-code-jazor/qrcode",
+    "homepage": "https://github.com/cook-code-jazor/pqrcode",
     "license": "MIT",
     "authors": [
         {
             "name": "anlige",
             "email": "zhanghuiguoanlige@126.com",
-            "homepage": "https://github.com/cook-code-jazor/qrcode"
+            "homepage": "https://github.com/cook-code-jazor/pqrcode"
         }
     ],
     "require": {
