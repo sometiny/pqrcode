@@ -37,7 +37,8 @@ define('N4', 10);
 define('QRSPEC_VERSION_MAX', 40);
 define('QRSPEC_WIDTH_MAX',   177);
 
-class QRCode {
+class QRCode
+{
 
     public $version;
     public $width;
@@ -45,10 +46,10 @@ class QRCode {
 
     public function encodeMask(QRInput $input, $mask)
     {
-        if($input->getVersion() < 0 || $input->getVersion() > QRSPEC_VERSION_MAX) {
+        if ($input->getVersion() < 0 || $input->getVersion() > QRSPEC_VERSION_MAX) {
             throw new \Exception('wrong version');
         }
-        if($input->getErrorCorrectionLevel() > QR_ECLEVEL_H) {
+        if ($input->getErrorCorrectionLevel() > QR_ECLEVEL_H) {
             throw new \Exception('wrong level');
         }
 
@@ -60,14 +61,14 @@ class QRCode {
         $frame = QRSpec::newFrame($version);
 
         $filler = new FrameFiller($width, $frame);
-        if(is_null($filler)) {
+        if (is_null($filler)) {
             return NULL;
         }
 
-        for($i=0; $i<$raw->dataLength + $raw->eccLength; $i++) {
+        for ($i = 0; $i < $raw->dataLength + $raw->eccLength; $i++) {
             $code = $raw->getCode();
             $bit = 0x80;
-            for($j=0; $j<8; $j++) {
+            for ($j = 0; $j < 8; $j++) {
                 $addr = $filler->next();
                 $filler->setFrameAt($addr, 0x02 | (($bit & $code) != 0));
                 $bit = $bit >> 1;
@@ -78,7 +79,7 @@ class QRCode {
         unset($raw);
 
         $j = QRSpec::getRemainder($version);
-        for($i=0; $i<$j; $i++) {
+        for ($i = 0; $i < $j; $i++) {
             $addr = $filler->next();
             $filler->setFrameAt($addr, 0x02);
         }
@@ -87,7 +88,7 @@ class QRCode {
         unset($filler);
 
         $maskObj = new QRMask();
-        if($mask < 0) {
+        if ($mask < 0) {
 
             if (QR_FIND_BEST_MASK) {
                 $masked = $maskObj->mask($width, $frame, $input->getErrorCorrectionLevel());
@@ -98,7 +99,7 @@ class QRCode {
             $masked = $maskObj->makeMask($width, $frame, $mask, $input->getErrorCorrectionLevel());
         }
 
-        if($masked == NULL) {
+        if ($masked == NULL) {
             return NULL;
         }
 
@@ -116,15 +117,15 @@ class QRCode {
 
     public function encodeString8bit($string, $version, $level)
     {
-        if($string == NULL) {
+        if ($string == NULL) {
             throw new \Exception('empty string!');
         }
 
         $input = new QRInput($version, $level);
-        if($input == NULL) return NULL;
+        if ($input == NULL) return NULL;
 
         $ret = $input->append($input, QR_MODE_8, strlen($string));
-        if($ret < 0) {
+        if ($ret < 0) {
             unset($input);
             return NULL;
         }
@@ -134,37 +135,78 @@ class QRCode {
     public function encodeString($string, $version, $level, $hint, $casesensitive)
     {
 
-        if($hint != QR_MODE_8 && $hint != QR_MODE_KANJI) {
+        if ($hint != QR_MODE_8 && $hint != QR_MODE_KANJI) {
             throw new \Exception('bad hint');
         }
 
         $input = new QRInput($version, $level);
-        if($input == NULL) return NULL;
+        if ($input == NULL) return NULL;
 
         $ret = QRSplit::splitStringToQRInput($string, $input, $hint, $casesensitive);
-        if($ret < 0) {
+        if ($ret < 0) {
             return NULL;
         }
 
         return $this->encodeInput($input);
     }
 
-    public static function png($text, $outfile = false, $level = QR_ECLEVEL_L, $size = 3, $margin = 1, $saveandprint=false)
+    /**
+     * encode and output
+     * @param $text
+     * @param bool $outfile
+     * @param int $level
+     * @param int $size
+     * @param int $margin
+     * @param bool $saveandprint
+     */
+    public static function png($text, $outfile = false, $level = QR_ECLEVEL_L, $size = 3, $margin = 1, $saveandprint = false)
     {
         $enc = QREncode::factory($level, $size, $margin);
         $enc->encodePNG($text, $outfile, $saveandprint);
     }
-    public static function imageSource($text, $type = 'png', $level = QR_ECLEVEL_L, $size = 3, $margin = 1, $saveandprint=false)
+
+
+    /**
+     * encode and get image resource
+     * @param $text
+     * @param string $type
+     * @param int $level
+     * @param int $size
+     * @param int $margin
+     * @param bool $saveandprint
+     * @return false|resource
+     */
+    public static function resource($text, $type = 'png', $level = QR_ECLEVEL_L, $size = 3, $margin = 1, $saveandprint = false)
     {
         $enc = QREncode::factory($level, $size, $margin);
         return $enc->imageSource($text, $type, $saveandprint);
     }
-    public static function image($text, $type = 'png', $level = QR_ECLEVEL_L, $size = 3, $margin = 1, $saveandprint=false)
+
+    /**
+     * encode and get image data
+     * @param $text
+     * @param string $type
+     * @param int $level
+     * @param int $size
+     * @param int $margin
+     * @param bool $saveandprint
+     * @return false|string
+     */
+    public static function image($text, $type = 'png', $level = QR_ECLEVEL_L, $size = 3, $margin = 1, $saveandprint = false)
     {
         $enc = QREncode::factory($level, $size, $margin);
         return $enc->image($text, $type, $saveandprint);
     }
 
+    /**
+     * get encoded source, eg. 01011010101101010101101
+     * @param $text
+     * @param bool $outfile
+     * @param int $level
+     * @param int $size
+     * @param int $margin
+     * @return string 01011010101101010101101
+     */
     public static function text($text, $outfile = false, $level = QR_ECLEVEL_L, $size = 3, $margin = 1)
     {
         $enc = QREncode::factory($level, $size, $margin);
