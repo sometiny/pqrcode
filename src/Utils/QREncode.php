@@ -1,6 +1,8 @@
 <?php
 namespace Jazor\QRCode\Utils;
 
+use Jazor\QRCode\QRCode;
+
 class QREncode {
 
     public $casesensitive = true;
