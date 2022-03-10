@@ -185,14 +185,6 @@ class QRCode
         return $enc->encode($text, $outfile);
     }
 
-    /**
-     * @param $text
-     * @param bool $outfile
-     * @param int $level
-     * @param int $size
-     * @param int $margin
-     * @return string[]
-     */
     public static function raw($text, $outfile = false, $level = QR_ECLEVEL_L, $size = 3, $margin = 1)
     {
         $enc = QREncode::factory($level, $size, $margin);
